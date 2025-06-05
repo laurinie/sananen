@@ -100,26 +100,31 @@
         .keyboard {
             display: grid;
             grid-template-rows: repeat(3, 1fr);
-            gap: 8px;
+            gap: 6px;
             margin-bottom: 20px;
+            width: 100%;
         }
 
         .keyboard-row {
             display: flex;
             justify-content: center;
-            gap: 6px;
+            gap: 4px;
+            width: 100%;
         }
 
         .key {
-            padding: 12px;
+            padding: 14px 8px;
             background-color: #d3d6da;
             border: none;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
             transition: background-color 0.1s ease;
-            min-width: 30px;
+            min-width: 28px;
+            flex: 1;
+            max-width: 38px;
+            text-align: center;
         }
 
         .key:hover {
@@ -127,8 +132,9 @@
         }
 
         .key.wide {
-            min-width: 60px;
-            font-size: 10px;
+            flex: 1.5;
+            font-size: 9px;
+            max-width: 60px;
         }
 
         .key.correct {
@@ -180,6 +186,11 @@
         }
 
         @media (max-width: 480px) {
+            .game-container {
+                padding: 20px;
+                margin: 0 10px;
+            }
+
             .letter-box {
                 width: 50px;
                 height: 50px;
@@ -187,8 +198,23 @@
             }
             
             .key {
-                padding: 10px 8px;
+                padding: 14px 8px;
                 font-size: 11px;
+                min-width: 28px;
+                max-width: 38px;
+            }
+
+            .key.wide {
+                font-size: 9px;
+                max-width: 60px;
+            }
+
+            .keyboard-row {
+                gap: 2px;
+            }
+
+            .keyboard {
+                gap: 4px;
             }
         }
     </style>
@@ -247,7 +273,6 @@
         <div class="message" id="message" style="display: none;"></div>
 
         <div class="stats">
-            <p>Sana: K-A-L-J-A</p>
             <p>6 arvausta käytettävissä</p>
         </div>
     </div>
