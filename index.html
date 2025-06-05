@@ -372,7 +372,35 @@
     <script>
         class WordleGame {
             constructor() {
-                this.targetWord = 'XYLOFONI';
+                this.words = [
+                    'UNIMAITO', 'JOUHIKKO', 'ESITELMÄ', 'KIINTEYS', 'PELASTUS', 'URHEILLA', 'RUOKAISA', 'ASETAKKI', 'RAKASTAA', 'TOIPILAS',
+                    'PÄLYILLÄ', 'SISÄPELI', 'HÄVITTÄÄ', 'HIKOILLA', 'SIVUVALO', 'PUNNITUS', 'HIILIKKO', 'VAATETÄI', 'BIOLOGIA', 'LAIMENNE',
+                    'VILLIKKO', 'PROPAANI', 'LATISTAA', 'RÄPÄTÄTI', 'ESTERATA', 'POMOMIES', 'RAJAMIES', 'EPÄREILU', 'ILMAISTA', 'KUUMAPÄÄ',
+                    'SOTAKONE', 'YLÄKERTA', 'SIVUMERI', 'STUERTTI', 'TEHTAILU', 'CIABATTA', 'PAHEMMIN', 'SUOJATIE', 'SYKLAAMI', 'KILLUTIN',
+                    'NELIRIVI', 'HIRNUNTA', 'PIISKURI', 'HALSTERI', 'KASVOTON', 'SKAALAUS', 'HUPAINEN', 'JÄLJILLÄ', 'VOIHKINA', 'OTTELIJA',
+                    'FARMARIT', 'VERISIDE', 'PONTTAUS', 'MERKKAUS', 'ONNISTAA', 'SINKKAUS', 'BLEISERI', 'KUKISTAA', 'INTRANET', 'LAHOTTAA',
+                    'VIVUTTAA', 'PÄIVITYS', 'LIUKUTYÖ', 'TALVISÄÄ', 'KUNNOLLA', 'KANTTAUS', 'KIPITTÄÄ', 'PUTOILLA', 'IILIMATO', 'LÄHIMMÄS',
+                    'NÄPERRYS', 'REHOTTAA', 'ALAREUNA', 'ÄÄNTÖASU', 'KOIRUOHO', 'KYTKENTÄ', 'NIITTAUS', 'LENNÄKKI', 'SURMAAJA', 'ESSEISTI',
+                    'ETUVAAKA', 'KIREÄSSÄ', 'HÖYLÄÄMÖ', 'HÄTYYTYS', 'ESIKOULU', 'PETÖLÄIN', 'KUORUKKA', 'UNIPATJA', 'MUOTIALA', 'PUDOTTAA',
+                    'MAAHENKI', 'TOIVEUNI', 'ULKOPELI', 'SLAMMATA', 'RYPISTYÄ', 'SIMPUTUS', 'JAKELIJA', 'HÖLMÖSTI', 'ROSKAAJA', 'TAMMIKUU',
+                    'PUUHIILI', 'TAHDITON', 'TRIKIINI', 'HOHDOKAS', 'MAAKARHU', 'LUODIKKO', 'ROMAHDUS', 'TYRKYLLE', 'LEINIKKI', 'AVIAARIO',
+                    'KAPTEENI', 'SUITSUTA', 'SISÄMERI', 'RÄJÄYTIN', 'TROOLAUS', 'PUKSIPUU', 'HOLHOOJA', 'LEPSUILU', 'RUTISTUS', 'RAPAKELI',
+                    'TOMUMAJA', 'LÄSSYTYS', 'TYÖVAIHE', 'KUKAHTAA', 'AHMAISTA', 'KEVÄTSÄÄ', 'AJOVALOT', 'KYYDITYS', 'VOIPUMUS', 'SISÄRATA',
+                    'KUUTONEN', 'SIJAINEN', 'KIIVAILU', 'RIIPPUEN', 'NAISÄÄNI', 'TYYSSIJA', 'MESSINKI', 'VILLAKAS', 'KIEKAISU', 'SORSINTA',
+                    'SAMMUTUS', 'ATAVISMI', 'OMELETTI', 'LAIVASTO', 'RAAMITUS', 'PREESENS', 'AIKANAAN', 'MAAJAUHE', 'KRITEERI', 'VERIYSKÄ',
+                    'PELAILLA', 'KISAILLA', 'LEHTOMAA', 'TUKIKOTI', 'ILONAIHE', 'EMINTIMÄ', 'PINGPONG', 'POLKUNEN', 'MUISTELU', 'KIIHKEYS',
+                    'RUNOTEOS', 'GRYNDATA', 'KIDEVESI', 'MAARUSKA', 'HUVITTUA', 'NULJASKA', 'KARTASTO', 'SPAGETTI', 'REELINKI', 'KOKEEKSI',
+                    'TAITTAJA', 'PAJUKORI', 'BANKETTI', 'TIIMITYÖ', 'PULTSARI', 'VEHKEILY', 'STOPPARI', 'VIDEOIDA', 'AJETTUMA', 'ETÄLUKIO',
+                    'KOMMUUNI', 'PESIYTYÄ', 'SELOSTAA', 'HURAHDUS', 'HUOVUTUS', 'AMMOTTAA', 'LYPSÄTYS', 'KIREÄLLÄ', 'NAAPUKKA', 'SÄVÄHTÄÄ',
+                    'KLAARATA', 'ALKUISIN', 'RYHTYMYS', 'OUTSIDER', 'SUIHKAUS', 'SAMAANNE', 'ROMUARVO', 'VÄSÄHDYS', 'LIETSUTA', 'HÄTHÄTÄÄ',
+                    'SOTKEUMA', 'JUOTTAMO', 'ELOSTELU', 'ILOJUHLA', 'LUHISTAA', 'TASOIHIN', 'SULAVESI', 'MYLLYTYS', 'ILTAMÄKI', 'HARKITTU',
+                    'PAVIAANI', 'PIELIKKI', 'REALISMI', 'PÖTIIKKA', 'TILUTTAA', 'VOUHOTUS', 'MUSKOTTI', 'JALLITUS', 'KUORSAUS', 'LENNOKAS',
+                    'LUKUVALO', 'VIRKATYÖ', 'EPÄTERVE', 'PLEBEIJI', 'MANGUSTI', 'VÄRTTINÄ', 'KYYPPARI', 'PESAISTA', 'TARKALLA', 'REKIKELI',
+                    'URARUUVI', 'KESKESSÄ', 'VAKAVUUS', 'YHTÄÄNNE', 'SEKSISTI', 'HINAUTUA', 'SUMUTTAA', 'PAJATTAA', 'TANSSATA', 'LIBRISTI',
+                    'KEKSINTÖ', 'SAVUSTUA', 'PILKONTA', 'KÄRRYTIE', 'MATKÄVÄS', 'HERISTÄÄ', 'JÄNISTÄÄ', 'KAPEIKKO', 'PYRKIMYS'
+                ];
+                
+                this.targetWord = this.getRandomWord();
                 this.currentRow = 0;
                 this.currentCol = 0;
                 this.gameOver = false;
@@ -381,6 +409,10 @@
                 
                 this.initializeGame();
                 this.attachEventListeners();
+            }
+
+            getRandomWord() {
+                return this.words[Math.floor(Math.random() * this.words.length)];
             }
 
             initializeGame() {
