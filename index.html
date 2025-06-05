@@ -13,12 +13,28 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-image: url('piknik.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: -1;
         }
 
         .header {
@@ -39,10 +55,10 @@
         }
 
         .game-container {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             max-width: 400px;
             width: 100%;
         }
@@ -113,7 +129,7 @@
         }
 
         .key {
-            padding: 14px 8px;
+            padding: 12px 6px;
             background-color: #d3d6da;
             border: none;
             border-radius: 4px;
@@ -121,9 +137,9 @@
             font-weight: bold;
             cursor: pointer;
             transition: background-color 0.1s ease;
-            min-width: 28px;
+            min-width: 22px;
             flex: 1;
-            max-width: 38px;
+            max-width: 32px;
             text-align: center;
         }
 
@@ -132,9 +148,9 @@
         }
 
         .key.wide {
-            flex: 1.5;
+            flex: 1.8;
             font-size: 9px;
-            max-width: 60px;
+            max-width: 58px;
         }
 
         .key.correct {
@@ -198,15 +214,15 @@
             }
             
             .key {
-                padding: 14px 8px;
-                font-size: 11px;
-                min-width: 28px;
-                max-width: 38px;
+                padding: 10px 3px;
+                font-size: 9px;
+                min-width: 18px;
+                max-width: 28px;
             }
 
             .key.wide {
-                font-size: 9px;
-                max-width: 60px;
+                font-size: 8px;
+                max-width: 48px;
             }
 
             .keyboard-row {
@@ -221,7 +237,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>🍺 Sananen</h1>
+        <h1>🧩 Sananen</h1>
         <p>Arvaa 5-kirjaiminen suomalainen sana!</p>
     </div>
 
@@ -242,7 +258,7 @@
                 <button class="key" data-key="i">I</button>
                 <button class="key" data-key="o">O</button>
                 <button class="key" data-key="p">P</button>
-                <button class="key" data-key="å">Å</button>
+                <button class="key" data-key="Backspace">⌫</button>
             </div>
             <div class="keyboard-row">
                 <button class="key" data-key="a">A</button>
@@ -258,7 +274,6 @@
                 <button class="key" data-key="ä">Ä</button>
             </div>
             <div class="keyboard-row">
-                <button class="key wide" data-key="Enter">SYÖTÄ</button>
                 <button class="key" data-key="z">Z</button>
                 <button class="key" data-key="x">X</button>
                 <button class="key" data-key="c">C</button>
@@ -266,7 +281,7 @@
                 <button class="key" data-key="b">B</button>
                 <button class="key" data-key="n">N</button>
                 <button class="key" data-key="m">M</button>
-                <button class="key wide" data-key="Backspace">POISTA</button>
+                <button class="key wide" data-key="Enter">ARVAA</button>
             </div>
         </div>
 
@@ -381,7 +396,7 @@
                 this.updateKeyboard();
                 
                 if (this.currentGuess === this.targetWord) {
-                    this.showMessage('Onneksi olkoon! 🎉 Löysit sanan!', 'success');
+                    this.showMessage('Onneksi olkoon! 🎉 Arvasit sanan!', 'success');
                     this.gameOver = true;
                 } else if (this.currentRow === 5) {
                     this.showMessage(`Peli päättyi! Sana oli: ${this.targetWord}`, 'info');
