@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sananen Nopeus - 10 Minuuttia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('piknik.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: -1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .timer-score {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-rows: repeat(6, 1fr);
+            gap: 4px;
+            margin-bottom: 20px;
+        }
+
+        .word-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+        }
+
+        .letter-box {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #d3d6da;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .letter-box.filled {
+            border-color: #878a8c;
+            color: #000;
+        }
+
+        .letter-box.correct {
+            background-color: #6aaa64;
+            border-color: #6aaa64;
+            color: white;
+        }
+
+        .letter-box.present {
+            background-color: #c9b458;
+            border-color: #c9b458;
+            color: white;
+        }
+
+        .letter-box.absent {
+            background-color: #787c7e;
+            border-color: #787c7e;
+            color: white;
+        }
+
+        .keyboard {
+            display: grid;
+            grid-template-rows: repeat(3, 1fr);
+            gap: 6px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            width: 100%;
+        }
+
+        .key {
+            padding: 12px 6px;
+            background-color: #d3d6da;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.1s ease;
+            min-width: 22px;
+            flex: 1;
+            max-width: 32px;
+            text-align: center;
+        }
+
+        .key:hover {
+            background-color: #bbb;
+        }
+
+        .key.wide {
+            flex: 1.8;
+            font-size: 9px;
+            max-width: 58px;
+        }
+
+        .key.correct {
+            background-color: #6aaa64;
+            color: white;
+        }
+
+        .key.present {
+            background-color: #c9b458;
+            color: white;
+        }
+
+        .key.absent {
+            background-color: #787c7e;
+            color: white;
+        }
+
+        .message {
+            text-align: center;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.info {
+            background-color: #cce7ff;
+            color: #004085;
+            border: 1px solid #99d6ff;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .start-btn {
+            background: #6aaa64;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .start-btn:hover {
+            background: #5a9954;
+        }
+
+        .start-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .next-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .next-btn:hover {
+            background: #0056b3;
+        }
+
+        .game-over {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .game-container {
+                padding: 15px;
+            }
+
+            .letter-box {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3em;
+            }
+
+            .timer-score {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚡ Sananen Nopeus</h1>
+        <p>Ratkaise mahdollisimman monta sanaa 10 minuutissa!</p>
+    </div>
+
+    <div class="timer-score">
+        <div class="timer">⏱️ <span id="timeLeft">10:00</span></div>
+        <div class="score">🏆 <span id="score">0</span></div>
+    </div>
+
+    <div class="game-container" id="gameContainer">
+        <div class="controls" id="startScreen">
+            <h2>Tervetuloa nopeuspeliin!</h2>
+            <p>Sinulla on 10 minuuttia aikaa ratkaista mahdollisimman monta 5-kirjaimista suomalaista sanaa.</p>
+            <button class="start-btn" id="startBtn">Aloita peli</button>
+        </div>
+
+        <div id="gameArea" style="display: none;">
+            <div class="message" id="message" style="display: none;"></div>
+            
+            <div class="game-board" id="gameBoard">
+                <!-- Game rows will be generated by JavaScript -->
+            </div>
+
+            <div class="keyboard" id="keyboard">
+                <div class="keyboard-row">
+                    <button class="key" data-key="q">Q</button>
+                    <button class="key" data-key="w">W</button>
+                    <button class="key" data-key="e">E</button>
+                    <button class="key" data-key="r">R</button>
+                    <button class="key" data-key="t">T</button>
+                    <button class="key" data-key="y">Y</button>
+                    <button class="key" data-key="u">U</button>
+                    <button class="key" data-key="i">I</button>
+                    <button class="key" data-key="o">O</button>
+                    <button class="key" data-key="p">P</button>
+                    <button class="key" data-key="⌫">⌫</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="key" data-key="a">A</button>
+                    <button class="key" data-key="s">S</button>
+                    <button class="key" data-key="d">D</button>
+                    <button class="key" data-key="f">F</button>
+                    <button class="key" data-key="g">G</button>
+                    <button class="key" data-key="h">H</button>
+                    <button class="key" data-key="j">J</button>
+                    <button class="key" data-key="k">K</button>
+                    <button class="key" data-key="l">L</button>
+                    <button class="key" data-key="ö">Ö</button>
+                    <button class="key" data-key="ä">Ä</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="key" data-key="z">Z</button>
+                    <button class="key" data-key="x">X</button>
+                    <button class="key" data-key="c">C</button>
+                    <button class="key" data-key="v">V</button>
+                    <button class="key" data-key="b">B</button>
+                    <button class="key" data-key="n">N</button>
+                    <button class="key" data-key="m">M</button>
+                    <button class="key wide" data-key="Enter">ARVAA</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class SpeedWordleGame {
+            constructor() {
+                this.words = [
+                    'KALJA', 'KOIRA', 'KISSA', 'TALO', 'AUTO',
+                    'LINTU', 'KUKKA', 'LEHTI', 'KUUSI', 'MÄNTY',
+                    'JÄRVI', 'METSÄ', 'TUULI', 'RANTA', 'MARJA',
+                    'SIENI', 'KASVI', 'RUOHO', 'VERSO', 'SILTA',
+                    'POLKU', 'KIUAS', 'VIHTA', 'KAUHA', 'LÖYLY',
+                    'SAUNA', 'MÖKKI', 'LAHTI', 'KOSKI', 'KENTT',
+                    'PELTO', 'NIITY', 'KORPI', 'LÄHDE', 'SAMMÄ',
+                    'HEINÄ', 'VILJA', 'KYLVÖ', 'SATOO', 'OMENA',
+                    'PÄÄRN', 'VADEL', 'MUSTI', 'PUOLA', 'TYRNI'
+                ];
+                
+                this.timeLeft = 600; // 10 minutes in seconds
+                this.score = 0;
+                this.gameStarted = false;
+                this.gameEnded = false;
+                this.timer = null;
+                
+                this.currentWord = '';
+                this.currentRow = 0;
+                this.currentCol = 0;
+                this.currentGuess = '';
+                this.roundEnded = false;
+                
+                this.initializeElements();
+                this.attachEventListeners();
+            }
+
+            initializeElements() {
+                this.startBtn = document.getElementById('startBtn');
+                this.startScreen = document.getElementById('startScreen');
+                this.gameArea = document.getElementById('gameArea');
+                this.timeLeftEl = document.getElementById('timeLeft');
+                this.scoreEl = document.getElementById('score');
+                this.messageEl = document.getElementById('message');
+                this.gameBoard = document.getElementById('gameBoard');
+            }
+
+            attachEventListeners() {
+                this.startBtn.addEventListener('click', () => this.startGame());
+                
+                document.addEventListener('keydown', (e) => {
+                    if (!this.gameStarted || this.gameEnded || this.roundEnded) return;
+                    
+                    const key = e.key.toUpperCase();
+                    
+                    if (key === 'ENTER') {
+                        this.submitGuess();
+                    } else if (key === 'BACKSPACE') {
+                        this.deleteLetter();
+                    } else if (this.isValidLetter(key)) {
+                        this.addLetter(key);
+                    }
+                });
+
+                const keys = document.querySelectorAll('.key');
+                keys.forEach(key => {
+                    key.addEventListener('click', () => {
+                        if (!this.gameStarted || this.gameEnded || this.roundEnded) return;
+                        
+                        const keyValue = key.dataset.key;
+                        
+                        if (keyValue === 'Enter') {
+                            this.submitGuess();
+                        } else if (keyValue === '⌫') {
+                            this.deleteLetter();
+                        } else {
+                            this.addLetter(keyValue.toUpperCase());
+                        }
+                    });
+                });
+            }
+
+            startGame() {
+                this.gameStarted = true;
+                this.startScreen.style.display = 'none';
+                this.gameArea.style.display = 'block';
+                
+                this.startTimer();
+                this.newRound();
+            }
+
+            startTimer() {
+                this.timer = setInterval(() => {
+                    this.timeLeft--;
+                    this.updateTimer();
+                    
+                    if (this.timeLeft <= 0) {
+                        this.endGame();
+                    }
+                }, 1000);
+            }
+
+            updateTimer() {
+                const minutes = Math.floor(this.timeLeft / 60);
+                const seconds = this.timeLeft % 60;
+                this.timeLeftEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            newRound() {
+                if (this.gameEnded) return;
+                
+                this.currentWord = this.getRandomWord();
+                this.currentRow = 0;
+                this.currentCol = 0;
+                this.currentGuess = '';
+                this.roundEnded = false;
+                
+                this.initializeGameBoard();
+                this.resetKeyboard();
+                this.hideMessage();
+            }
+
+            getRandomWord() {
+                return this.words[Math.floor(Math.random() * this.words.length)];
+            }
+
+            initializeGameBoard() {
+                this.gameBoard.innerHTML = '';
+                
+                for (let row = 0; row < 6; row++) {
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'word-row';
+                    
+                    for (let col = 0; col < 5; col++) {
+                        const letterBox = document.createElement('div');
+                        letterBox.className = 'letter-box';
+                        letterBox.id = `box-${row}-${col}`;
+                        rowDiv.appendChild(letterBox);
+                    }
+                    
+                    this.gameBoard.appendChild(rowDiv);
+                }
+            }
+
+            resetKeyboard() {
+                const keys = document.querySelectorAll('.key');
+                keys.forEach(key => {
+                    key.classList.remove('correct', 'present', 'absent');
+                });
+            }
+
+            isValidLetter(letter) {
+                return /^[A-ZÅÄÖ]$/.test(letter);
+            }
+
+            addLetter(letter) {
+                if (this.currentCol < 5) {
+                    const box = document.getElementById(`box-${this.currentRow}-${this.currentCol}`);
+                    box.textContent = letter;
+                    box.classList.add('filled');
+                    
+                    this.currentGuess += letter;
+                    this.currentCol++;
+                }
+            }
+
+            deleteLetter() {
+                if (this.currentCol > 0) {
+                    this.currentCol--;
+                    const box = document.getElementById(`box-${this.currentRow}-${this.currentCol}`);
+                    box.textContent = '';
+                    box.classList.remove('filled');
+                    
+                    this.currentGuess = this.currentGuess.slice(0, -1);
+                }
+            }
+
+            submitGuess() {
+                if (this.currentGuess.length !== 5) {
+                    this.showMessage('Sana täytyy olla 5 kirjainta pitkä!', 'error');
+                    return;
+                }
+
+                this.evaluateGuess();
+                this.updateKeyboard();
+                
+                if (this.currentGuess === this.currentWord) {
+                    this.score++;
+                    this.scoreEl.textContent = this.score;
+                    this.showMessage(`Oikein! Sana oli: ${this.currentWord}`, 'success');
+                    this.roundEnded = true;
+                    setTimeout(() => this.newRound(), 2000);
+                } else if (this.currentRow === 5) {
+                    this.showMessage(`Sana oli: ${this.currentWord}`, 'info');
+                    this.roundEnded = true;
+                    setTimeout(() => this.newRound(), 3000);
+                } else {
+                    this.currentRow++;
+                    this.currentCol = 0;
+                    this.currentGuess = '';
+                }
+            }
+
+            evaluateGuess() {
+                const targetArray = this.currentWord.split('');
+                const guessArray = this.currentGuess.split('');
+                const letterCount = {};
+                
+                targetArray.forEach(letter => {
+                    letterCount[letter] = (letterCount[letter] || 0) + 1;
+                });
+
+                const results = new Array(5).fill('absent');
+                for (let i = 0; i < 5; i++) {
+                    if (guessArray[i] === targetArray[i]) {
+                        results[i] = 'correct';
+                        letterCount[guessArray[i]]--;
+                    }
+                }
+
+                for (let i = 0; i < 5; i++) {
+                    if (results[i] !== 'correct' && letterCount[guessArray[i]] > 0) {
+                        results[i] = 'present';
+                        letterCount[guessArray[i]]--;
+                    }
+                }
+
+                for (let i = 0; i < 5; i++) {
+                    const box = document.getElementById(`box-${this.currentRow}-${i}`);
+                    box.classList.add(results[i]);
+                }
+            }
+
+            updateKeyboard() {
+                const guessArray = this.currentGuess.split('');
+                
+                guessArray.forEach((letter, index) => {
+                    const key = document.querySelector(`[data-key="${letter.toLowerCase()}"]`);
+                    if (key) {
+                        const box = document.getElementById(`box-${this.currentRow}-${index}`);
+                        const boxClass = box.classList.contains('correct') ? 'correct' :
+                                       box.classList.contains('present') ? 'present' : 'absent';
+                        
+                        if (!key.classList.contains('correct') && 
+                            (boxClass === 'correct' || !key.classList.contains('present'))) {
+                            key.classList.remove('correct', 'present', 'absent');
+                            key.classList.add(boxClass);
+                        }
+                    }
+                });
+            }
+
+            showMessage(text, type) {
+                this.messageEl.textContent = text;
+                this.messageEl.className = `message ${type}`;
+                this.messageEl.style.display = 'block';
+            }
+
+            hideMessage() {
+                this.messageEl.style.display = 'none';
+            }
+
+            endGame() {
+                this.gameEnded = true;
+                clearInterval(this.timer);
+                
+                this.gameArea.innerHTML = `
+                    <div class="game-over">
+                        <h2>🎉 Peli päättyi!</h2>
+                        <p style="font-size: 1.5em; margin: 20px 0;">
+                            Ratkaisit <strong>${this.score}</strong> sanaa!
+                        </p>
+                        <p>Hienoa työtä! 10 minuuttia meni nopeasti.</p>
+                        <button class="start-btn" onclick="location.reload()">Pelaa uudelleen</button>
+                        <br><br>
+                        <a href="index.html" style="color: #007bff; text-decoration: none;">← Takaisin tavalliseen peliin</a>
+                    </div>
+                `;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new SpeedWordleGame();
+        });
+    </script>
+</body>
+</html> 
