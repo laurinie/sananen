@@ -59,7 +59,7 @@
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            max-width: 400px;
+            max-width: 480px;
             width: 100%;
         }
 
@@ -72,19 +72,19 @@
 
         .word-row {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(8, 1fr);
             gap: 5px;
         }
 
         .letter-box {
-            width: 60px;
-            height: 60px;
+            width: 40px;
+            height: 40px;
             border: 2px solid #d3d6da;
             border-radius: 3px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2em;
+            font-size: 1.3em;
             font-weight: bold;
             text-transform: uppercase;
             transition: all 0.3s ease;
@@ -202,17 +202,97 @@
         }
 
         @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                margin-bottom: 15px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+                margin-bottom: 5px;
+            }
+
+            .header p {
+                font-size: 1em;
+            }
+
             .game-container {
-                padding: 20px;
-                margin: 0 10px;
+                padding: 15px;
+                margin: 0 5px;
+                max-width: none;
+                width: calc(100% - 10px);
+            }
+
+            .game-board {
+                gap: 3px;
+                margin-bottom: 15px;
+            }
+
+            .word-row {
+                gap: 3px;
             }
 
             .letter-box {
-                width: 50px;
-                height: 50px;
-                font-size: 1.5em;
+                width: 35px;
+                height: 35px;
+                font-size: 1.1em;
             }
             
+            .keyboard {
+                gap: 3px;
+                margin-bottom: 10px;
+            }
+
+            .keyboard-row {
+                gap: 2px;
+            }
+
+            .key {
+                padding: 12px 4px;
+                font-size: 10px;
+                min-width: 20px;
+                max-width: 30px;
+            }
+
+            .key.wide {
+                font-size: 8px;
+                max-width: 50px;
+            }
+
+            .stats {
+                margin-top: 10px;
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 360px) {
+            body {
+                padding: 5px;
+            }
+
+            .game-container {
+                padding: 10px;
+                margin: 0;
+                width: 100%;
+            }
+
+            .letter-box {
+                width: 32px;
+                height: 32px;
+                font-size: 1em;
+            }
+
+            .word-row {
+                gap: 2px;
+            }
+
+            .game-board {
+                gap: 2px;
+            }
+
             .key {
                 padding: 10px 3px;
                 font-size: 9px;
@@ -221,16 +301,8 @@
             }
 
             .key.wide {
-                font-size: 8px;
-                max-width: 48px;
-            }
-
-            .keyboard-row {
-                gap: 2px;
-            }
-
-            .keyboard {
-                gap: 4px;
+                font-size: 7px;
+                max-width: 45px;
             }
         }
     </style>
@@ -238,7 +310,7 @@
 <body>
     <div class="header">
         <h1>🧩 Sananen</h1>
-        <p>Arvaa 5-kirjaiminen suomalainen sana!</p>
+        <p>Arvaa 8-kirjaiminen suomalainen sana!</p>
     </div>
 
     <div class="game-container">
@@ -295,7 +367,7 @@
     <script>
         class WordleGame {
             constructor() {
-                this.targetWord = 'KALJA';
+                this.targetWord = 'XYLOFONI';
                 this.currentRow = 0;
                 this.currentCol = 0;
                 this.gameOver = false;
@@ -314,7 +386,7 @@
                     const rowDiv = document.createElement('div');
                     rowDiv.className = 'word-row';
                     
-                    for (let col = 0; col < 5; col++) {
+                    for (let col = 0; col < 8; col++) {
                         const letterBox = document.createElement('div');
                         letterBox.className = 'letter-box';
                         letterBox.id = `box-${row}-${col}`;
@@ -365,7 +437,7 @@
             }
 
             addLetter(letter) {
-                if (this.currentCol < 5) {
+                if (this.currentCol < 8) {
                     const box = document.getElementById(`box-${this.currentRow}-${this.currentCol}`);
                     box.textContent = letter;
                     box.classList.add('filled');
@@ -387,8 +459,8 @@
             }
 
             submitGuess() {
-                if (this.currentGuess.length !== 5) {
-                    this.showMessage('Sana täytyy olla 5 kirjainta pitkä!', 'error');
+                if (this.currentGuess.length !== 8) {
+                    this.showMessage('Sana täytyy olla 8 kirjainta pitkä!', 'error');
                     return;
                 }
 
@@ -419,8 +491,8 @@
                 });
 
                 // First pass: mark correct letters
-                const results = new Array(5).fill('absent');
-                for (let i = 0; i < 5; i++) {
+                const results = new Array(8).fill('absent');
+                for (let i = 0; i < 8; i++) {
                     if (guessArray[i] === targetArray[i]) {
                         results[i] = 'correct';
                         letterCount[guessArray[i]]--;
@@ -428,7 +500,7 @@
                 }
 
                 // Second pass: mark present letters
-                for (let i = 0; i < 5; i++) {
+                for (let i = 0; i < 8; i++) {
                     if (results[i] !== 'correct' && letterCount[guessArray[i]] > 0) {
                         results[i] = 'present';
                         letterCount[guessArray[i]]--;
@@ -436,7 +508,7 @@
                 }
 
                 // Apply colors to boxes
-                for (let i = 0; i < 5; i++) {
+                for (let i = 0; i < 8; i++) {
                     const box = document.getElementById(`box-${this.currentRow}-${i}`);
                     box.classList.add(results[i]);
                 }
